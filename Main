@@ -1,0 +1,18 @@
+
+
+public class main {
+    public static void main (String[]args){
+        System.out.println("Iniciando simulador...");
+        
+        // Defina o nome do arquivo .bin que seu assembler criou.
+        // Certifique-se de que este arquivo está na pasta raiz do seu projeto.
+        String nomeDoArquivo = "count.bin";
+
+        // Cria a CPU, que agora carrega o programa do arquivo.
+        CPU pc1 = new CPU(nomeDoArquivo);
+        
+        pc1.run();
+        
+        System.out.println("Simulação finalizada.");
+    }
+}
