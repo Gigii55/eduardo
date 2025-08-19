@@ -1,0 +1,34 @@
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class lib {
+
+    
+    public int extract_bits(int value, int bstart, int blength) {
+        int mask = (1 << blength) - 1;
+        return (value >> bstart) & mask;
+    }
+
+    public int[] load_binary(String binary_name) {
+        ArrayList<Integer> instrucoes = new ArrayList<>();
+        
+        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(binary_name))) {
+            while (dataInputStream.available() > 1) {
+
+                int low = dataInputStream.readByte() & 0x000000FF;
+                int high = dataInputStream.readByte() & 0x000000FF;
+                int value = (low | (high << 8));
+                
+                instrucoes.add(value);
+            }
+        } catch (IOException e) {
+            System.err.println("Não foi possível ler o arquivo '" + binary_name );
+            e.printStackTrace();
+        }
+
+        System.out.println("LIB: " + instrucoes.size() + " instruções carregadas do arquivo " + binary_name);
+        return instrucoes.stream().mapToInt(i -> i).toArray();
+    }
+}
