@@ -5,123 +5,254 @@ public class Control {
         int formato = biblioteca.extract_bits(instrucaoAtual, 15, 1);
 
         if (formato == 0) {
-            int functionCode = biblioteca.extract_bits(instrucaoAtual, 9, 6);
-            int destinationRegister = biblioteca.extract_bits(instrucaoAtual, 6, 3);
-            int sourceRegister1 = biblioteca.extract_bits(instrucaoAtual, 3, 3);
-            int sourceRegister2 = biblioteca.extract_bits(instrucaoAtual, 0, 3);
 
-            switch (functionCode) {
+            int funcao = biblioteca.extract_bits(instrucaoAtual, 9, 6);
+            int registradorDestino = biblioteca.extract_bits(instrucaoAtual, 6, 3);
+            int Registrador1 = biblioteca.extract_bits(instrucaoAtual, 3, 3);
+            int Registrador2 = biblioteca.extract_bits(instrucaoAtual, 0, 3);
+
+            switch (funcao) {
+
                 case 0:
-                    System.out.println("    Executando a função ADD:");
-                    int valor1 = registradores[sourceRegister1];
-                    int valor2 = registradores[sourceRegister2];
+                    System.out.println("    Executando a função para ADD:");
+
+                    int valor1 = registradores[Registrador1];
+                    int valor2 = registradores[Registrador2];
+
                     int resultadoSoma = valor1 + valor2;
-                    System.out.println("      -> Somando r" + sourceRegister1 + " (" + valor1 + ") com r" + sourceRegister2 + " (" + valor2 + ")");
-                    registradores[destinationRegister] = resultadoSoma;
-                    System.out.println("      -> Resultado " + resultadoSoma + " salvo em r" + destinationRegister);
+
+                    System.out.println("      -> Somando r" + Registrador1 + " (" + valor1 + ") com r" + Registrador2 + " (" + valor2 + ")");
+
+                    registradores[registradorDestino] = resultadoSoma;
+
+                    System.out.println("      -> Resultado " + resultadoSoma + " salvo em r" + registradorDestino);
+
                     return pc + 1;
-                
+
                 case 1:
-                    System.out.println("    Executando a função SUB:");
-                    int valorSub1 = registradores[sourceRegister1];
-                    int valorSub2 = registradores[sourceRegister2];
+                    System.out.println("    Executando a função para SUB:");
+
+                    int valorSub1 = registradores[Registrador1];
+                    int valorSub2 = registradores[Registrador2];
                     int resultadoSub = valorSub1 - valorSub2;
-                    System.out.println("      -> Subtraindo r" + sourceRegister1 + " (" + valorSub1 + ") - r" + sourceRegister2 + " (" + valorSub2 + ")");
-                    registradores[destinationRegister] = resultadoSub;
-                    System.out.println("      -> Resultado " + resultadoSub + " salvo em r" + destinationRegister);
+
+                    System.out.println("      -> Subtraindo r" + Registrador1 + " (" + valorSub1 + ") - r" + Registrador2 + " (" + valorSub2 + ")");
+
+                    registradores[registradorDestino] = resultadoSub;
+
+                    System.out.println("      -> Resultado " + resultadoSub + " salvo em r" + registradorDestino);
+
                     return pc + 1;
 
                 case 2:
-                    System.out.println("    Executando a função MUL:");
-                    registradores[destinationRegister] = registradores[sourceRegister1] * registradores[sourceRegister2];
+                    System.out.println("    Executando a função MUL:");
+
+                    registradores[registradorDestino] = registradores[Registrador1] * registradores[Registrador2];
+
                     return pc + 1;
 
-                case 3: 
-                    System.out.println("    Executando a função DIV:");
-                    if (registradores[sourceRegister2] != 0) {
-                        registradores[destinationRegister] = registradores[sourceRegister1] / registradores[sourceRegister2];
+                case 3:
+                    System.out.println("    Executando a função DIV:");
+
+                    if (registradores[Registrador2] != 0) {
+
+                        registradores[registradorDestino] = registradores[Registrador1] / registradores[Registrador2];
+
                     } else {
-                        registradores[destinationRegister] = 0;
+
+                        registradores[registradorDestino] = 0;
                     }
                     return pc + 1;
 
-                case 4: 
-                    System.out.println("    Executando CMP_EQUAL:");
-                    registradores[destinationRegister] = (registradores[sourceRegister1] == registradores[sourceRegister2]) ? 1 : 0;
+                case 4:
+                System.out.println("    Executando CMP_EQUAL (==):");
+
+                    if (registradores[Registrador1] == registradores[Registrador2]) {
+
+                        registradores[registradorDestino] = 1;
+
+                    } else {
+
+                        registradores[registradorDestino] = 0;
+                    }
                     return pc + 1;
 
-                case 5: 
-                    System.out.println("    Executando CMP_NEQ:");
-                    registradores[destinationRegister] = (registradores[sourceRegister1] != registradores[sourceRegister2]) ? 1 : 0;
+                case 5:
+
+                    System.out.println("    Executando CMP_NEQ (!=):");
+
+                    if (registradores[Registrador1] != registradores[Registrador2]) {
+                        registradores[registradorDestino] = 1;
+                    } else {
+                        registradores[registradorDestino] = 0;
+                    }
                     return pc + 1;
 
                 case 6:
-                    System.out.println("    Executando EQ (>=):");
-                    registradores[destinationRegister] = (registradores[sourceRegister1] >= registradores[sourceRegister2]) ? 1 : 0;
+                    System.out.println("    Executando CMP_LESS (<):");
+
+                    if (registradores[Registrador1] < registradores[Registrador2]) {
+
+                        registradores[registradorDestino] = 1;
+
+                    } else {
+
+                        registradores[registradorDestino] = 0;
+                    }
                     return pc + 1;
 
-                case 15: 
-                    System.out.println("    Executando LOAD:");
-                    int enderecoLoad = registradores[sourceRegister1];
-                    System.out.println("      -> Lendo da posição de memória " + enderecoLoad + " (de r" + sourceRegister1 + ")");
-                    int dadoCarregado = memoriaDados[enderecoLoad];
-                    registradores[destinationRegister] = dadoCarregado;
-                    System.out.println("      -> Valor " + dadoCarregado + " carregado para r" + destinationRegister);
+                case 7:
+                    System.out.println("    Executando CMP_GREATER (>):");
+
+                    if (registradores[Registrador1] > registradores[Registrador2]) {
+
+                        registradores[registradorDestino] = 1;
+                        
+                    } else {
+                        registradores[registradorDestino] = 0;
+                    }
                     return pc + 1;
-                    
-                case 16: 
-                    System.out.println("    Executando STORE:");
-                    int enderecoStore = registradores[sourceRegister1];
-                    int dadoParaSalvar = registradores[sourceRegister2];
-                    System.out.println("      -> Salvando o valor " + dadoParaSalvar + " (de r" + sourceRegister2 + ") na memória[" + enderecoStore + "]");
+
+                case 8:
+                    System.out.println("    Executando CMP_LESS_EQ (<=):");
+                    if (registradores[Registrador1] <= registradores[Registrador2]) {
+                        registradores[registradorDestino] = 1;
+                    } else {
+                        registradores[registradorDestino] = 0;
+                    }
+                    return pc + 1;
+
+                case 9:
+                    System.out.println("    Executando CMP_GREATER_EQ (>=):");
+                    if (registradores[Registrador1] >= registradores[Registrador2]) {
+                        registradores[registradorDestino] = 1;
+                    } else {
+                        registradores[registradorDestino] = 0;
+                    }
+                    return pc + 1;
+
+                    case 10:
+                    System.out.println("    Executando AND:");
+
+                    int v1 = registradores[Registrador1];
+                    int v2 = registradores[Registrador2];
+
+                    int resultado = v1 & v2;
+
+                    registradores[registradorDestino] = resultado;
+
+                    return pc + 1;
+
+                case 11:
+                    System.out.println("    Executando OR:");
+
+                    int val1 = registradores[Registrador1];
+                    int val2 = registradores[Registrador2];
+
+                    int resulta = val1 | val2;
+
+
+                    registradores[registradorDestino] = resulta;
+                    return pc + 1;
+
+
+                case 12:
+                    System.out.println("    Executando XOR:");
+                    registradores[registradorDestino] = registradores[Registrador1] ^ registradores[Registrador2];
+                    return pc + 1;
+
+                case 13:
+                    System.out.println("    Executando SHL (Shift Left):");
+                    registradores[registradorDestino] = registradores[Registrador1] << registradores[Registrador2];
+                    return pc + 1;
+
+                case 14:
+                    System.out.println("    Executando SHR (Shift Right Logical):");
+                    registradores[registradorDestino] = registradores[Registrador1] >>> registradores[Registrador2];
+                    return pc + 1;
+
+                case 15:
+                    System.out.println("    Executando LOAD:");
+                    int enderecoLoad = registradores[Registrador1];
+                    System.out.println("      -> Lendo da posição de memória " + enderecoLoad + " (de r" + Registrador1 + ")");
+                    int dadoCarregado = memoriaDados[enderecoLoad];
+                    registradores[registradorDestino] = dadoCarregado;
+                    System.out.println("      -> Valor " + dadoCarregado + " carregado para r" + registradorDestino);
+                    return pc + 1;
+
+                case 16:
+                    System.out.println("    Executando STORE:");
+                    int enderecoStore = registradores[Registrador1];
+                    int dadoParaSalvar = registradores[Registrador2];
+                    System.out.println("      -> Salvando o valor " + dadoParaSalvar + " (de r" + Registrador2 + ") na memória[" + enderecoStore + "]");
                     memoriaDados[enderecoStore] = dadoParaSalvar;
                     return pc + 1;
 
-                case 63: 
-                    System.out.println("    Executando SYSCALL:");
+
+                case 63:
+                    System.out.println("    Executando SYSCALL:");
+
+                     System.out.println("      -> Estado da memória (primeiras 20 posições) antes do SYSCALL:");
+                    for (int i = 0; i < 20; i++) {
+                        
+                            System.out.println("         memoria[" + i + "] = " + memoriaDados[i]);
+                        
+                    }
+
                     if (registradores[0] == 0) {
-                        System.out.println("      -> Serviço 0: Parando o programa.");
+                        System.out.println("      -> Serviço 0: Parando o programa.");
                         return -1;
                     }
                     return pc + 1;
 
                 default:
-                    System.err.println("ERRO: Código de Função desconhecido para Tipo R: " + functionCode);
+                    System.err.println("ERRO: Código de Função desconhecido para Tipo R: " + funcao);
                     return -1;
             }
 
-        } else { 
+        } else {
             int opcode = biblioteca.extract_bits(instrucaoAtual, 13, 2);
             int rd_reg = biblioteca.extract_bits(instrucaoAtual, 10, 3);
             int imediato = biblioteca.extract_bits(instrucaoAtual, 0, 10);
 
             switch (opcode) {
+
                 case 0:
-                    System.out.println("    Executando JUMP:");
-                    System.out.println("      -> Saltando para o endereço " + imediato);
+                
+                    System.out.println("    Executando JUMP:");
+                    System.out.println("      -> Saltando para o endereço " + imediato);
                     return imediato;
 
                 case 1:
-                    System.out.println("    Executando JUMP CONDICIONAL:");
+
+                    System.out.println("    Executando JUMP CONDICIONAL:");
+
                     int valorTeste = registradores[rd_reg];
                     boolean condicao = (valorTeste != 0);
-                    System.out.println("      -> Testando se r" + rd_reg + " (" + valorTeste + ") != 0. Condição é " + (condicao ? "VERDADEIRA" : "FALSA"));
+
+                    System.out.println("      -> Testando se r" + rd_reg + " (" + valorTeste + ") != 0. Condição é " + (condicao ? "VERDADEIRA" : "FALSA"));
+
                     if (condicao) {
-                        int novoPc = pc + 1 + imediato;
-                        System.out.println("      -> Salto será TOMADO. Novo PC = " + novoPc);
-                        return novoPc;
+
+                        
+                        System.out.println("      -> Salto será TOMADO. Novo PC = " + pc);
+                        return pc +1 + imediato;
+
                     } else {
-                        System.out.println("      -> Salto será IGNORADO.");
+
+                        System.out.println("      -> Salto será IGNORADO.");
                         return pc + 1;
                     }
 
-                case 3: 
-                    System.out.println("    Executando MOV:");
-                    System.out.println("      -> Movendo o valor imediato " + imediato + " para r" + rd_reg);
+                case 3:
+
+                    System.out.println("    Executando MOV:");
+                    System.out.println("      -> Movendo o valor imediato " + imediato + " para r" + rd_reg);
                     registradores[rd_reg] = imediato;
                     return pc + 1;
-                    
+
                 default:
+
                     System.err.println("ERRO: Opcode desconhecido para Tipo I/J: " + opcode);
                     return -1;
             }
