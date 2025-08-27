@@ -8,24 +8,25 @@ public class CPU {
     private Control unidadeDeControle;
     private lib biblioteca;
 
-    public CPU(String caminhoDoArquivo) {
+    public CPU (String caminhoDoArquivo) {
+
         this.pc = 0;
         this.registradores = new int[8];
         this.memoriaDados = new int[1024];
         this.unidadeDeControle = new Control();
         this.biblioteca = new lib();
         
-        // Usa a biblioteca para carregar o programa do arquivo, chamando o método 'load_binary'.
         this.memoriaInstrucoes = biblioteca.load_binary(caminhoDoArquivo);
 
-        // Verificação de robustez: avisa se o programa carregado está vazio.
+
         if (this.memoriaInstrucoes == null || this.memoriaInstrucoes.length == 0) {
             System.err.println("AVISO: Nenhum programa foi carregado. O arquivo .bin pode estar vazio ou corrompido.");
-            this.pc = -1; // Impede a execução de um programa vazio.
+            this.pc = -1;
         }
     }
     
     public void run() {
+        
         if (this.pc == -1) {
             System.out.println("Execução abortada pois nenhum programa foi carregado.");
             return;
@@ -37,12 +38,15 @@ public class CPU {
         System.out.println("=== EXECUÇÃO FINALIZADA ===");
         System.out.println("Estado final dos registradores: " + Arrays.toString(registradores));
     }
+    public int tam =0;
 
-    private void executarCiclo() {
-        if (pc < 0 || pc >= memoriaInstrucoes.length) {
+    public void executarCiclo() {
+        
+        if (pc < 0 || pc >= memoriaInstrucoes.length ) {
             this.pc = -1;
             return;
         }
+
         int instrucaoAtual = this.memoriaInstrucoes[pc];
         System.out.println("PC: " + pc + " | Lendo instrução: " + Integer.toBinaryString(instrucaoAtual));
         
@@ -51,5 +55,6 @@ public class CPU {
         this.pc = proximoPc;
         System.out.println("    Estado dos Registradores: " + Arrays.toString(registradores));
         System.out.println("-------------------------------------------------");
+    
     }
-}
+    }
